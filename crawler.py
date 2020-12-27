@@ -67,6 +67,7 @@ for dep_value in raw_data:
             brief_code = list(raw_data[dep_value]["brief"][cos_id].keys())[0]
             brief = raw_data[dep_value]["brief"][cos_id][brief_code]['brief'].split(',')
             name = raw_cos_data["cos_cname"].replace("(英文授課)", '')
+            name = name.replace("(英文班)", '')
             course_data[cos_id] = {
                 "id": raw_cos_data["cos_id"],                           # 當期課號
                 "num_limit": raw_cos_data["num_limit"],                 # 人數上限
