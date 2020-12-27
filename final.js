@@ -59,6 +59,9 @@ function autocomplete(inp, course_data) {
         var result_container = document.getElementById("search_result") ;
         result_container.appendChild(a);
         var search_result = search(val) ;
+        search_result.sort(function(a, b){
+            return a.id - b.id ;
+        }) ;
         /*for each item in the array...*/
         for (i = 0; i < search_result.length; i++) {
             /*check if the item starts with the same letters as the text field value:*/
@@ -76,12 +79,22 @@ function autocomplete(inp, course_data) {
             var brief = search_result[i]['brief'] ;
             var memo = search_result[i]['memo'] ;
             var type = search_result[i]['type'] ;
+            var badge = '<span class="badge badge-danger">' + type + '</span>'
+            if(english)
+            {
+                badge += '&nbsp;<span class="badge badge-info">英文授課</span>' ;
+            }
+            for(let j=0; j<brief.length; j++)
+            {
+                if(brief[j] == ''){break ;}
+                badge += '&nbsp;<span class="badge badge-secondary">' + brief[j] + '</span>' ;
+            }
             // var start_pos = name.toUpperCase().search(val.toUpperCase()) ;
             /*create a DIV element for each matching element:*/
             b = document.createElement("div");
             b.setAttribute ("class", "list-group-item list-group-item-action");
             /*make the matching letters bold:*/
-            b.innerHTML = name + '<br>' + id + '・' + teacher + '・' + parseInt(credit) + '學分' ;
+            b.innerHTML = name + '<br>' + badge + '<br>' + id + '・' + teacher + '・' + parseInt(credit) + '學分' ;
             // for(let j=0; j<name.length; j++)
             // {
             //     if(j == start_pos)
