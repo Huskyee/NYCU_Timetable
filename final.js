@@ -3,6 +3,7 @@
 const year = 109
 const semester = 2
 var course_data = {}
+var name = []
 
 function generateTable()
 {
@@ -26,6 +27,19 @@ function generateTable()
     }
 }
 
+function search(input) {
+    /*With flag 'i', the search is case-insensitive, e.g., no difference between A and a.*/
+    const regexp = RegExp(input, 'i');
+    const result = Object.values(course_data)
+        .filter(course => ((
+            course.id == input ||
+            course.teacher.match(regexp) ||
+            course.name.match(regexp))
+        ));
+
+    return result;
+}
+
 function autocomplete(inp, course_data) {
     /*the autocomplete function takes two arguments,
     the text field element and an array of possible autocompleted values:*/
@@ -44,45 +58,56 @@ function autocomplete(inp, course_data) {
         /*append the DIV element as a child of the autocomplete container:*/
         var result_container = document.getElementById("search_result") ;
         result_container.appendChild(a);
+        var search_result = search(val) ;
         /*for each item in the array...*/
-        for (i = 0; i < Object.keys(course_data).length; i++) {
+        for (i = 0; i < search_result.length; i++) {
             /*check if the item starts with the same letters as the text field value:*/
-            var key = Object.keys(course_data)[i] ;
-            var name = course_data[key]['name'] ;
-            var start_pos = name.toUpperCase().search(val.toUpperCase()) ;
-            if (start_pos != -1) {
-                /*create a DIV element for each matching element:*/
-                b = document.createElement("div");
-                b.setAttribute ("class", "list-group-item list-group-item-action");
-                /*make the matching letters bold:*/
-                b.innerHTML = name ;
-                // for(let j=0; j<name.length; j++)
-                // {
-                //     if(j == start_pos)
-                //     {
-                //         var bold_substr = "<strong>" + name.substr(j, val.length) + "</strong>";
-                //         b.innerHTML += bold_substr ;
-                //         j += val.length-1 ;
-                //     }
-                //     else
-                //     {
-                //         b.innerHTML += name.substr(j, 1) ;
-                //     }
-                // }
-                // b.innerHTML = "<strong>" + arr[i].substr(start_pos, val.length) + "</strong>";
-                // b.innerHTML += arr[i].substr(val.length);
-                // /*insert a input field that will hold the current array item's value:*/
-                // b.innerHTML += "<input type='hidden' value='" + name + "'>";
-                // /*execute a function when someone clicks on the item value (DIV element):*/
-                // b.addEventListener("click", function(e) {
-                //     /*insert the value for the autocomplete text field:*/
-                //     inp.value = this.getElementsByTagName("input")[0].value;
-                //     /*close the list of autocompleted values,
-                //     (or any other open lists of autocompleted values:*/
-                //     closeAllLists();
-                // });
-                a.appendChild(b);
-            }
+            // var key = Object.keys(course_data)[i] ;
+            var id = search_result[i]['id'] ;
+            var num_limit = search_result[i]['num_limit'] ;
+            var reg_num = search_result[i]['reg_num'] ;
+            var name = search_result[i]['name'] ;
+            var credit = search_result[i]['credit'] ;
+            var hours = search_result[i]['hours'] ;
+            var teacher = search_result[i]['teacher'] ;
+            var time = search_result[i]['time'] ;
+            var time_classroom = search_result[i]['time-classroom'] ;
+            var english = search_result[i]['english'] ;
+            var brief = search_result[i]['brief'] ;
+            var memo = search_result[i]['memo'] ;
+            var type = search_result[i]['type'] ;
+            // var start_pos = name.toUpperCase().search(val.toUpperCase()) ;
+            /*create a DIV element for each matching element:*/
+            b = document.createElement("div");
+            b.setAttribute ("class", "list-group-item list-group-item-action");
+            /*make the matching letters bold:*/
+            b.innerHTML = name + '<br>' + id + '・' + teacher + '・' + parseInt(credit) + '學分' ;
+            // for(let j=0; j<name.length; j++)
+            // {
+            //     if(j == start_pos)
+            //     {
+            //         var bold_substr = "<strong>" + name.substr(j, val.length) + "</strong>";
+            //         b.innerHTML += bold_substr ;
+            //         j += val.length-1 ;
+            //     }
+            //     else
+            //     {
+            //         b.innerHTML += name.substr(j, 1) ;
+            //     }
+            // }
+            // b.innerHTML = "<strong>" + arr[i].substr(start_pos, val.length) + "</strong>";
+            // b.innerHTML += arr[i].substr(val.length);
+            // /*insert a input field that will hold the current array item's value:*/
+            // b.innerHTML += "<input type='hidden' value='" + name + "'>";
+            // /*execute a function when someone clicks on the item value (DIV element):*/
+            // b.addEventListener("click", function(e) {
+            //     /*insert the value for the autocomplete text field:*/
+            //     inp.value = this.getElementsByTagName("input")[0].value;
+            //     /*close the list of autocompleted values,
+            //     (or any other open lists of autocompleted values:*/
+            //     closeAllLists();
+            // });
+            a.appendChild(b);
         }
     });
     /*execute a function presses a key on the keyboard:*/
