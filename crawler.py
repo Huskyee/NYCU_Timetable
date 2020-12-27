@@ -66,11 +66,12 @@ for dep_value in raw_data:
             time_list = parse_time(raw_cos_data["cos_time"])
             brief_code = list(raw_data[dep_value]["brief"][cos_id].keys())[0]
             brief = raw_data[dep_value]["brief"][cos_id][brief_code]['brief'].split(',')
+            name = raw_cos_data["cos_cname"].replace("(英文授課)", '')
             course_data[cos_id] = {
                 "id": raw_cos_data["cos_id"],                           # 當期課號
                 "num_limit": raw_cos_data["num_limit"],                 # 人數上限
                 "reg_num": raw_cos_data["reg_num"],                     # 修課人數
-                "name": raw_cos_data["cos_cname"],                      # 課程名稱
+                "name": name,                                           # 課程名稱
                 "credit": raw_cos_data["cos_credit"],                   # 學分
                 "hours": raw_cos_data["cos_hours"],                     # 時數
                 "teacher": raw_cos_data["teacher"],                     # 開課教師
@@ -81,12 +82,6 @@ for dep_value in raw_data:
                 "memo": raw_cos_data["memo"],                           # 說明
                 "type": raw_cos_data["cos_type"],                       # 選別
             }
-
-# for cos_id in course_data:
-#     print(course_data[cos_id]["id"])
-#     print(course_data[cos_id]["name"])
-#     print(course_data[cos_id]["brief"])
-#     print('\n')
 
 with open(str(year) + '-' + str(semester) + "_data.json", "w") as f:
     f.write(json.dumps(course_data))
