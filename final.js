@@ -70,6 +70,7 @@ function autocomplete(inp, course_data) {
             var num_limit = search_result[i]['num_limit'] ;
             var reg_num = search_result[i]['reg_num'] ;
             var name = search_result[i]['name'] ;
+            console.log(name);
             var credit = search_result[i]['credit'] ;
             var hours = search_result[i]['hours'] ;
             var teacher = search_result[i]['teacher'] ;
