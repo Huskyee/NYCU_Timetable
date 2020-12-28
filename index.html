@@ -37,20 +37,24 @@
           </div>
           <div class="border rounded mb-4">
             <h4 class="p-3 mb-0">搜尋結果</h4>
-            <div id="search_result" class="overflow-auto" style="height: 250px; overflow-y: scroll !important;">
+            <div id="search_result" class="overflow-auto" style="height: 300px; overflow-y: scroll !important;">
 
             </div>
           </div>
           <div class="border rounded mb-4">
-            <h4 class="p-3 mb-0">已選課程</h4>
-            <div id="selected_course" class="overflow-auto" style="height: 450px; overflow-y: scroll !important;">
+            <h4 class="pt-3 pl-3 pr-3 pb-1 mb-0">已選課程</h4>
+            <div class="pl-3 pb-2">
+              <span id="total_credits" class="badge badge-success">0 學分</span>
+              <span id="total_hours" class="badge badge-success">0 小時</span>
+            </div>
+            <div id="selected_course" class="overflow-auto" style="height: 300px; overflow-y: scroll !important;">
 
             </div>
           </div>
         </div>
-        <div class="col-lg-8">
-          <div class="overflow-auto" style="height: 800px">
-            <table class="table table-bordered text-center" id="timetable" style="table-layout: fixed; line-height: 20px;">
+        <div class="col-lg-8 mt-3">
+          <div class="overflow-auto" style="height: 800px;">
+            <table class="table table-bordered text-center" id="timetable" style="table-layout: fixed; line-height: 20px; min-width: 650px; width: 100%;">
               <thead>
                 <tr>
                   <th scope="col">時間</th>
