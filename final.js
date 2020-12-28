@@ -1,9 +1,11 @@
 "use strict";
 
-const year = 109
-const semester = 2
-var course_data = {}
-var selected_course = {}
+const year = 109;
+const semester = 2;
+var course_data = {};
+var selected_course = {};
+var total_credits = 0;
+var total_hours = 0;
 
 function generateTable()
 {
@@ -40,21 +42,33 @@ function filter_course(input) {
     return result;
 }
 
-function getCourseID(element) {
+function getcourseID(element) {
     return element.closest('.course').id;
 }
 
+function updateCreditHour(courseID, add) {
+    var search_result = filter_course(courseID) ;
+    var credit = parseInt(search_result[0]['credit']) ;
+    var hour = parseInt(search_result[0]['hours']) ;
+    var credit_element = document.getElementById('total_credits');
+    var hour_element = document.getElementById('total_hours');
+    if(add){total_credits += credit;total_hours += hour}
+    else{total_credits -= credit;total_hours -= hour}
+    credit_element.innerHTML = total_credits + " 學分";
+    hour_element.innerHTML = total_hours + " 小時";
+}
 
-
-function toggleCourse(courseId) {
-    const button = document.querySelector(`.course[id="${courseId}"] .toggle-course`);
-    if (courseId in selected_course) { // Remove course
-        delete selected_course[courseId];
-        document.querySelector(`#selected_course div[id="${courseId}"]`).remove();
-        // document.querySelectorAll(`.period[data-id="${courseId}"]`).forEach(elem => elem.remove());
+function toggleCourse(courseID) {
+    const button = document.querySelector(`.course[id="${courseID}"] .toggle-course`);
+    var add = true;
+    if (courseID in selected_course) { // Remove course
+        add = false;
+        delete selected_course[courseID];
+        document.querySelector(`#selected_course div[id="${courseID}"]`).remove();
+        // document.querySelectorAll(`.period[data-id="${courseID}"]`).forEach(elem => elem.remove());
         button?.classList.remove('selected');
     } else { // Select course
-        /*const periods = courseData[courseId].time;
+        /*const periods = courseData[courseID].time;
         const isConflict = periods.some(period => document.getElementById(period).querySelector(".period:not(.preview)"))
         if (isConflict) {
             Toast.fire({
@@ -64,18 +78,19 @@ function toggleCourse(courseId) {
             return;
         }*/
         var container = document.getElementById("selected_course");
-        selected_course[courseId] = true;
-        appendCourseElement(courseId, container, false);
-        // renderPeriodBlock(courseData[courseId]);
+        selected_course[courseID] = true;
+        appendCourseElement(courseID, container, false);
+        // renderPeriodBlock(courseData[courseID]);
         button?.classList.add('selected');
     }
+    updateCreditHour(courseID, add);
     console.log(selected_course);
     /*document.querySelector(".credits").textContent = `${totalCredits()} 學分`;*/
 }
 
 document.addEventListener("click", function ({ target }) {
     if (target.classList.contains('toggle-course'))
-        toggleCourse(getCourseID(target));
+        toggleCourse(getcourseID(target));
 })
 
 function appendCourseElement(val, container, is_search) {
