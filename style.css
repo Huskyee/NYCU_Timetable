@@ -1,0 +1,8 @@
+.course>.col-1>.toggle-course {
+    transition: transform .25s;
+}
+
+.course>.col-1>.toggle-course.selected {
+    color: #dc3545 !important;
+    transform: rotate(135deg);
+}
