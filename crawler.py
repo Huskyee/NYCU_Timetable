@@ -11,8 +11,23 @@ def parse_time(tc):
     for item in tc_list:
         time = re.findall(pattern, item.split('-')[0])
         for t in time:
-            time_list.append(t)
+            for i in range(len(t)-1):
+                time_list.append(t[0]+t[i+1])
+    # print(time_list)
     return time_list
+
+# 擷取「上課時間及教室」之「時間」部分
+def parse_classroom(tc):
+    tc_list = tc.split(',')
+    classroom_list = []
+    for item in tc_list:
+        try:
+            classroom = item.split('-')[1]
+        except IndexError:
+            classroom = ''
+        classroom_list.append(classroom)
+    # print(classroom_list)
+    return classroom_list
 
 
 year = 109
@@ -64,6 +79,7 @@ for dep_value in raw_data:
                 continue
             raw_cos_data = raw_data[dep_value][dep_content][cos_id]
             time_list = parse_time(raw_cos_data["cos_time"])
+            classroom_list = parse_classroom(raw_cos_data["cos_time"])
             brief_code = list(raw_data[dep_value]["brief"][cos_id].keys())[0]
             brief = raw_data[dep_value]["brief"][cos_id][brief_code]['brief'].split(',')
             name = raw_cos_data["cos_cname"].replace("(英文授課)", '')
@@ -77,6 +93,7 @@ for dep_value in raw_data:
                 "hours": raw_cos_data["cos_hours"],                     # 時數
                 "teacher": raw_cos_data["teacher"],                     # 開課教師
                 "time": time_list,                                      # 上課時間
+                "classroom": classroom_list,                            # 上課教室
                 "time-classroom": raw_cos_data["cos_time"],             # 上課時間及教室
                 "english": language[cos_id]["授課語言代碼"] == "en-us",   # 英語授課
                 "brief": brief,                                         # 摘要
