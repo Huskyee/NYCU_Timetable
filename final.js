@@ -6,6 +6,7 @@ var course_data = {};
 var selected_course = {};
 var total_credits = 0;
 var total_hours = 0;
+var total_period = {}
 
 function generateTable()
 {
@@ -22,7 +23,7 @@ function generateTable()
         for(let j=0; j<dayList.length; j++)
         {
             var day = dayList[j]
-            row += `<td id="${day}${time}"></td>`
+            row += `<td id="${day}${time}" style="vertical-align: middle;"></td>`
         }
         row += `</tr>`
         $("#timetable tbody").append(row) ;
@@ -50,6 +51,8 @@ function updateCreditHour(courseID, add) {
     var search_result = filter_course(courseID) ;
     var credit = parseInt(search_result[0]['credit']) ;
     var hour = parseInt(search_result[0]['hours']) ;
+    if(isNaN(credit)){credit = 0;}
+    if(isNaN(hour)){hour = 0;}
     var credit_element = document.getElementById('total_credits');
     var hour_element = document.getElementById('total_hours');
     if(add){total_credits += credit;total_hours += hour}
@@ -61,13 +64,15 @@ function updateCreditHour(courseID, add) {
 function toggleCourse(courseID) {
     const button = document.querySelector(`.course[id="${courseID}"] .toggle-course`);
     var add = true;
+    const data_set = filter_course(courseID);
+    const timeList = data_set[0]["time"];
     if (courseID in selected_course) { // Remove course
         add = false;
         delete selected_course[courseID];
         document.querySelector(`#selected_course div[id="${courseID}"]`).remove();
         // document.querySelectorAll(`.period[data-id="${courseID}"]`).forEach(elem => elem.remove());
         button?.classList.remove('selected');
-    } else { // Select course
+    } else { // Add course
         /*const periods = courseData[courseID].time;
         const isConflict = periods.some(period => document.getElementById(period).querySelector(".period:not(.preview)"))
         if (isConflict) {
@@ -77,6 +82,11 @@ function toggleCourse(courseID) {
             });
             return;
         }*/
+        if(isConflict(timeList))
+        {
+            alert('衝堂了啦！');
+            return;
+        }
         var container = document.getElementById("selected_course");
         selected_course[courseID] = true;
         appendCourseElement(courseID, container, false);
@@ -84,13 +94,95 @@ function toggleCourse(courseID) {
         button?.classList.add('selected');
     }
     updateCreditHour(courseID, add);
+    updateTable(courseID, add);
     console.log(selected_course);
     /*document.querySelector(".credits").textContent = `${totalCredits()} 學分`;*/
+}
+
+function updateTable(courseID, add) {
+    const data_set = filter_course(courseID);
+    const timeList = data_set[0]["time"];
+    const name = data_set[0]["name"]
+    const classroom = data_set[0]["classroom"]
+    for(let i=0; i<timeList.length; i++)
+    {
+        var time = timeList[i];
+        var tableElement = document.getElementById(time);
+        var btn = document.createElement("button");
+        btn.classList.add("btn", "btn-outline-light");
+        btn.innerHTML = name + '<br>' + classroom;
+        if(!add)  // Remove from table
+        {
+            tableElement.removeChild(tableElement.firstChild);
+            delete total_period[time];
+        }
+        else  // Add to table
+        {
+            tableElement.appendChild(btn);
+            total_period[time] = true;
+        }
+    }
+}
+
+function isConflict(timeList) {
+    for(let i=0; i<timeList.length; i++)
+    {
+        var time = timeList[i];
+        if(time in total_period)
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 document.addEventListener("click", function ({ target }) {
     if (target.classList.contains('toggle-course'))
         toggleCourse(getcourseID(target));
+})
+
+document.addEventListener("mouseover", function (event) {
+    var element = event.target;
+    if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
+        const courseID = element.closest('.course').id;
+        const timeList = filter_course(courseID)[0]["time"];
+        timeList.forEach(time => {
+            const table_element = document.getElementById(time);
+            if(time in total_period){table_element.classList.add('bg-danger')}
+            else{table_element.classList.add('bg-success');}
+            if(table_element.firstChild)
+            {
+                const btn = table_element.firstChild;
+                btn.classList.remove("btn-outline-dark");
+                btn.classList.add("btn-outline-light");
+            }
+            // table_element.classList.add('text-white');
+        });
+    }
+})
+
+document.addEventListener("mouseout", function (event) {
+    var element = event.target;
+    if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
+        document.querySelectorAll('.bg-success').forEach(table_element => {
+            table_element.classList.remove('bg-success', 'text-white');
+            if(table_element.firstChild)
+            {
+                const btn = table_element.firstChild;
+                btn.classList.remove("btn-outline-light");
+                btn.classList.add("btn-outline-dark");
+            }
+        });
+        document.querySelectorAll('.bg-danger').forEach(table_element => {
+            table_element.classList.remove('bg-danger', 'text-white');
+            if(table_element.firstChild)
+            {
+                const btn = table_element.firstChild;
+                btn.classList.remove("btn-outline-light");
+                btn.classList.add("btn-outline-dark");
+            }
+        });
+    }
 })
 
 function appendCourseElement(val, container, is_search) {
