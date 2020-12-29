@@ -70,18 +70,14 @@ function toggleCourse(courseID) {
         add = false;
         delete selected_course[courseID];
         document.querySelector(`#selected_course div[id="${courseID}"]`).remove();
-        // document.querySelectorAll(`.period[data-id="${courseID}"]`).forEach(elem => elem.remove());
         button?.classList.remove('selected');
+        document.querySelectorAll('.bg-success').forEach(table_element => {
+            table_element.classList.remove('bg-success', 'text-white');
+        });
+        document.querySelectorAll('.bg-danger').forEach(table_element => {
+            table_element.classList.remove('bg-danger', 'text-white');
+        });
     } else { // Add course
-        /*const periods = courseData[courseID].time;
-        const isConflict = periods.some(period => document.getElementById(period).querySelector(".period:not(.preview)"))
-        if (isConflict) {
-            Toast.fire({
-                icon: 'error',
-                title: "和目前課程衝堂了欸"
-            });
-            return;
-        }*/
         if(isConflict(timeList))
         {
             alert('衝堂了啦！');
@@ -102,11 +98,35 @@ function toggleCourse(courseID) {
 function updateTable(courseID, add) {
     const data_set = filter_course(courseID);
     const timeList = data_set[0]["time"];
-    const name = data_set[0]["name"]
-    const classroom = data_set[0]["classroom"]
+    const name = data_set[0]["name"];
+    // const classroom = data_set[0]["classroom"];
+    const time_classroom = data_set[0]["time-classroom"];
+    const tc_list = time_classroom.split(',');
+    var tc_pair = {};
+    for(let i=0; i<tc_list.length; i++)
+    {
+        const tc = tc_list[i];
+        const ts = tc.split('-')[0];
+        var c;
+        const pattern = /[MTWRFSU][1-9yznabcd]+/g;
+        const t_list = ts.match(pattern);
+        for(let j=0; j<t_list.length; j++)
+        {
+            const t = t_list[j];
+            for(let k=0; k<t.length-1; k++)
+            {
+                const t_split = t[0]+t[k+1];
+                try{c = tc.split('-')[1];}
+                catch(e){c = '';}
+                tc_pair[t_split] = c;
+            }
+        }
+    }
+    console.log(tc_pair);
     for(let i=0; i<timeList.length; i++)
     {
         var time = timeList[i];
+        var classroom = tc_pair[time];
         var tableElement = document.getElementById(time);
         var btn = document.createElement("button");
         btn.classList.add("btn", "btn-outline-light");
@@ -118,6 +138,7 @@ function updateTable(courseID, add) {
         }
         else  // Add to table
         {
+            if(!($(`#${time}`).hasClass("bg-success"))){tableElement.classList.add("bg-success");}
             tableElement.appendChild(btn);
             total_period[time] = true;
         }
@@ -249,7 +270,7 @@ function appendCourseElement(val, container, is_search) {
 function searchCourse(inp) {
     /*execute a function when someone writes in the text field:*/
     inp.addEventListener("input", function(e) {
-        var a, i, val = this.value;        
+        var a, i, val = this.value;
         /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
