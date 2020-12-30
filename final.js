@@ -161,14 +161,16 @@ function download() {
     if(screen.width < 1024) {
         document.getElementById("viewport").setAttribute("content", "width=1200px");
     }
-    html2canvas(document.querySelector("#timetable")).then(canvas => {
-        var dataURL = canvas.toDataURL("image/png");
-        var link = document.createElement('a');
-        link.href = dataURL;
-        link.download = year + '-' + semester + '_timetable.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+    html2canvas(document.querySelector("#timetable"), {
+        windowWidth: "1200px"
+    }).then(canvas => {
+            var dataURL = canvas.toDataURL("image/png");
+            var link = document.createElement('a');
+            link.href = dataURL;
+            link.download = year + '-' + semester + '_timetable.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
     });
     if(screen.width < 1024) {
         document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, shrink-to-fit=no");
