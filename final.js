@@ -72,10 +72,10 @@ function toggleCourse(courseID) {
         document.querySelector(`#selected_course div[id="${courseID}"]`).remove();
         button?.classList.remove('selected');
         document.querySelectorAll('.bg-success').forEach(table_element => {
-            table_element.classList.remove('bg-success', 'text-white');
+            table_element.classList.remove('bg-success');
         });
         document.querySelectorAll('.bg-danger').forEach(table_element => {
-            table_element.classList.remove('bg-danger', 'text-white');
+            table_element.classList.remove('bg-danger');
         });
     } else { // Add course
         if(isConflict(timeList))
@@ -85,7 +85,7 @@ function toggleCourse(courseID) {
         }
         var container = document.getElementById("selected_course");
         selected_course[courseID] = true;
-        appendCourseElement(courseID, container, false);
+        appendCourseElement(courseID, container);
         button?.classList.add('selected');
     }
     updateCreditHour(courseID, add);
@@ -158,24 +158,28 @@ function isConflict(timeList) {
 }
 
 function download() {
-    if(screen.width < 1024) {
-        document.getElementById("viewport").setAttribute("content", "width=1200");
-    }
-    html2canvas(document.querySelector("#timetable"), {
-        windowWidth: "1200px",
-        windowHeight: "800px"
-    }).then(canvas => {
-            var dataURL = canvas.toDataURL("image/png");
+    document.querySelectorAll('.bg-success').forEach(table_element => {
+        table_element.classList.remove('bg-success');
+    });
+    document.querySelectorAll('.bg-danger').forEach(table_element => {
+        table_element.classList.remove('bg-danger');
+    });
+    document.querySelectorAll('.btn-outline-light').forEach(table_element => {
+        table_element.classList.remove('btn-outline-light');
+        table_element.classList.add('btn-outline-dark');
+    });
+    setTimeout(function(){
+        var table = document.getElementById("timetable");
+        domtoimage.toPng(table)
+        .then(function (dataURL) {
             var link = document.createElement('a');
             link.href = dataURL;
             link.download = year + '-' + semester + '_timetable.png';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-    });
-    if(screen.width < 1024) {
-        document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, shrink-to-fit=no");
-    }
+        });
+    }, 500);
 }
 
 document.addEventListener("click", function ({ target }) {
@@ -208,7 +212,7 @@ document.addEventListener("mouseout", function (event) {
     var element = event.target;
     if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
         document.querySelectorAll('.bg-success').forEach(table_element => {
-            table_element.classList.remove('bg-success', 'text-white');
+            table_element.classList.remove('bg-success');
             if(table_element.firstChild)
             {
                 const btn = table_element.firstChild;
@@ -217,7 +221,7 @@ document.addEventListener("mouseout", function (event) {
             }
         });
         document.querySelectorAll('.bg-danger').forEach(table_element => {
-            table_element.classList.remove('bg-danger', 'text-white');
+            table_element.classList.remove('bg-danger');
             if(table_element.firstChild)
             {
                 const btn = table_element.firstChild;
@@ -228,15 +232,15 @@ document.addEventListener("mouseout", function (event) {
     }
 })
 
-function appendCourseElement(val, container, is_search) {
+function appendCourseElement(val, container) {
     var search_result = filter_course(val) ;
-    var selected = "";
-    if(!is_search){selected = " selected"};
     search_result.sort(function(x, y){
         return x.id - y.id ;
     }) ;
     for (let i = 0; i < search_result.length; i++) {
+        var selected = "";
         var id = search_result[i]['id'] ;
+        if(id in selected_course){selected = " selected";}
         var num_limit = search_result[i]['num_limit'] ;
         var reg_num = search_result[i]['reg_num'] ;
         var name = search_result[i]['name'] ;
@@ -305,7 +309,7 @@ function searchCourse(inp) {
         var list_group = document.createElement("div");
         list_group.setAttribute("id", "autocomplete-list");
         list_group.setAttribute("class", "autocomplete-items");
-        appendCourseElement(val, list_group, true);
+        appendCourseElement(val, list_group);
         search_result.appendChild(list_group);
     });
     function closeAllLists(elmnt) {
