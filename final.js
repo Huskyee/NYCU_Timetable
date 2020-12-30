@@ -158,11 +158,8 @@ function isConflict(timeList) {
 }
 
 function download() {
-    document.querySelectorAll('.bg-success').forEach(table_element => {
-        table_element.classList.remove('bg-success');
-    });
-    document.querySelectorAll('.bg-danger').forEach(table_element => {
-        table_element.classList.remove('bg-danger');
+    document.querySelectorAll('th, td').forEach(table_element => {
+        table_element.classList.add('bg-white');
     });
     document.querySelectorAll('.btn-outline-light').forEach(table_element => {
         table_element.classList.remove('btn-outline-light');
