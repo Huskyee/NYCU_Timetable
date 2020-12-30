@@ -30,6 +30,7 @@ function generateTable()
     }
 }
 
+// Return the matched course data of the input.
 function filter_course(input) {
     /*With flag 'i', the search is case-insensitive, e.g., no difference between A and a.*/
     const regexp = RegExp(input, 'i');
@@ -47,6 +48,7 @@ function getcourseID(element) {
     return element.closest('.course, .btn').id;
 }
 
+// Update the total credits and hours of the selected lists.
 function updateCreditHour(courseID, add) {
     var search_result = filter_course(courseID) ;
     var credit = parseInt(search_result[0]['credit']) ;
@@ -61,6 +63,9 @@ function updateCreditHour(courseID, add) {
     hour_element.innerHTML = total_hours + " 小時";
 }
 
+// Trigger when 
+// 1. click on the "+" icon on the course
+// 2. click on the "-" icon on the course
 function toggleCourse(courseID) {
     const button = document.querySelector(`.course[id="${courseID}"] .toggle-course`);
     var add = true;
@@ -90,8 +95,12 @@ function toggleCourse(courseID) {
     }
     updateCreditHour(courseID, add);
     updateTable(courseID, add);
+    save();
 }
 
+// Render the table when
+// 1. Add course
+// 2. Remove course
 function updateTable(courseID, add) {
     const data_set = filter_course(courseID);
     const timeList = data_set[0]["time"];
@@ -145,6 +154,7 @@ function updateTable(courseID, add) {
     }
 }
 
+// Whether the time periods of the chosen course is conflict with the ones of the selected courses.
 function isConflict(timeList) {
     for(let i=0; i<timeList.length; i++)
     {
@@ -157,6 +167,7 @@ function isConflict(timeList) {
     return false;
 }
 
+// Download the table as a PNG file.
 function download() {
     document.querySelectorAll('th, td').forEach(table_element => {
         table_element.classList.add('bg-white');
@@ -179,56 +190,9 @@ function download() {
     }, 500);
 }
 
-document.addEventListener("click", function ({ target }) {
-    if(target.classList.contains('toggle-course'))
-        toggleCourse(getcourseID(target));
-    if(target.id == 'download')
-        download();
-})
-
-document.addEventListener("mouseover", function (event) {
-    var element = event.target;
-    if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
-        const courseID = element.closest('.course').id;
-        const timeList = filter_course(courseID)[0]["time"];
-        timeList.forEach(time => {
-            const table_element = document.getElementById(time);
-            if(time in total_period){table_element.classList.add('bg-danger')}
-            else{table_element.classList.add('bg-success');}
-            if(table_element.firstChild)
-            {
-                const btn = table_element.firstChild;
-                btn.classList.remove("btn-outline-dark");
-                btn.classList.add("btn-outline-light");
-            }
-        });
-    }
-})
-
-document.addEventListener("mouseout", function (event) {
-    var element = event.target;
-    if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
-        document.querySelectorAll('.bg-success').forEach(table_element => {
-            table_element.classList.remove('bg-success');
-            if(table_element.firstChild)
-            {
-                const btn = table_element.firstChild;
-                btn.classList.remove("btn-outline-light");
-                btn.classList.add("btn-outline-dark");
-            }
-        });
-        document.querySelectorAll('.bg-danger').forEach(table_element => {
-            table_element.classList.remove('bg-danger');
-            if(table_element.firstChild)
-            {
-                const btn = table_element.firstChild;
-                btn.classList.remove("btn-outline-light");
-                btn.classList.add("btn-outline-dark");
-            }
-        });
-    }
-})
-
+// Append courses to
+// 1. search list
+// 2. selected course list
 function appendCourseElement(val, container) {
     var search_result = filter_course(val) ;
     search_result.sort(function(x, y){
@@ -295,11 +259,10 @@ function appendCourseElement(val, container) {
     }
 }
 
+// Show related courses while typing keywords.
 function searchCourse(inp) {
-    /*execute a function when someone writes in the text field:*/
     inp.addEventListener("input", function(e) {
         var a, i, val = this.value;
-        /*close any already open lists of autocompleted values*/
         closeAllLists();
         if (!val) { return false;}
         var search_result = document.getElementById("search_result");
@@ -309,9 +272,9 @@ function searchCourse(inp) {
         appendCourseElement(val, list_group);
         search_result.appendChild(list_group);
     });
+    // close all autocomplete lists in the document,
+    // except the one passed as an argument:
     function closeAllLists(elmnt) {
-        /*close all autocomplete lists in the document,
-        except the one passed as an argument:*/
         var x = document.getElementsByClassName("autocomplete-items");
         for (var i = 0; i < x.length; i++) {
             if (elmnt != x[i] && elmnt != inp) {
@@ -321,6 +284,7 @@ function searchCourse(inp) {
     }
 }
 
+// Load the course data.
 function loadJSON()
 {
     jQuery.ajaxSetup({async: false});
@@ -333,11 +297,12 @@ function loadJSON()
     jQuery.ajaxSetup({async: true});
 }
 
-
-
+// Show course info modal when
+// 1. clicking on the name of the search result list or the selected list.
+// 2. clicking on the course button on the table.
 function showModal() {
     $('#courseModal').on('show.bs.modal', function (event) {
-        var launcher = event.relatedTarget // Button that triggered the modal
+        var launcher = event.relatedTarget // Element that triggered the modal
         var courseID = launcher.closest(".course, .btn").id;
         var data = filter_course(courseID)[0];
         var name = data["name"];
@@ -366,9 +331,89 @@ function showModal() {
         })
 }
 
-$(document).ready(function(){
+// Save the selected course data to local storage.
+function save() {
+    localStorage.setItem("selected_course",JSON.stringify(selected_course));
+}
+
+// Load the selected course data from local storage.
+function load() {
+    selected_course = localStorage.getItem("selected_course");
+    selected_course = JSON.parse(selected_course);
+    if(selected_course==null){
+        selected_course = {};
+    }
+}
+
+function init() {
     generateTable();
     loadJSON();
+    load();
+    var course_list = Object.keys(selected_course)
+    for(let i=0; i<course_list.length; i++)
+    {
+        var id = course_list[i];
+        var button = document.querySelector(`.course[id="${id}"] .toggle-course`);
+        var container = document.getElementById("selected_course");
+        appendCourseElement(id, container);
+        button?.classList.add('selected');
+        updateCreditHour(id, true);
+        updateTable(id, true);
+    }
+}
+
+$(document).ready(function(){
     searchCourse(document.getElementById("search"));
     showModal();
+    init();
+    
+    document.addEventListener("click", function ({target}) {
+        if(target.classList.contains('toggle-course'))
+            toggleCourse(getcourseID(target));
+        if(target.id == 'download')
+            download();
+    })
+    
+    document.addEventListener("mouseover", function (event) {
+        var element = event.target;
+        if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
+            const courseID = element.closest('.course').id;
+            const timeList = filter_course(courseID)[0]["time"];
+            timeList.forEach(time => {
+                const table_element = document.getElementById(time);
+                if(time in total_period){table_element.classList.add('bg-danger')}
+                else{table_element.classList.add('bg-success');}
+                if(table_element.firstChild)
+                {
+                    const btn = table_element.firstChild;
+                    btn.classList.remove("btn-outline-dark");
+                    btn.classList.add("btn-outline-light");
+                }
+            });
+        }
+    })
+    
+    document.addEventListener("mouseout", function (event) {
+        var element = event.target;
+        if (element.matches('.autocomplete-items .course, .autocomplete-items .course *')) {
+            document.querySelectorAll('.bg-success').forEach(table_element => {
+                table_element.classList.remove('bg-success');
+                if(table_element.firstChild)
+                {
+                    const btn = table_element.firstChild;
+                    btn.classList.remove("btn-outline-light");
+                    btn.classList.add("btn-outline-dark");
+                }
+            });
+            document.querySelectorAll('.bg-danger').forEach(table_element => {
+                table_element.classList.remove('bg-danger');
+                if(table_element.firstChild)
+                {
+                    const btn = table_element.firstChild;
+                    btn.classList.remove("btn-outline-light");
+                    btn.classList.add("btn-outline-dark");
+                }
+            });
+        }
+    })
 }) ;
