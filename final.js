@@ -125,7 +125,7 @@ function updateTable(courseID, add) {
         var tableElement = document.getElementById(time);
         var btn = document.createElement("button");
         btn.classList.add("btn", "btn-outline-dark");
-        btn.setAttribute("style", "font-size: 0.5rem; padding: 0.375rem;");
+        btn.setAttribute("style", "padding: 0.375rem;");
         btn.setAttribute("id", courseID);
         btn.setAttribute("data-toggle", "modal");
         btn.setAttribute("data-target", "#courseModal");
@@ -162,7 +162,8 @@ function download() {
         document.getElementById("viewport").setAttribute("content", "width=1200");
     }
     html2canvas(document.querySelector("#timetable"), {
-        windowWidth: "1200px"
+        windowWidth: "1200px",
+        windowHeight: "800px"
     }).then(canvas => {
             var dataURL = canvas.toDataURL("image/png");
             var link = document.createElement('a');
