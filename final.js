@@ -159,7 +159,7 @@ function isConflict(timeList) {
 
 function download() {
     if(screen.width < 1024) {
-        document.getElementById("viewport").setAttribute("content", "width=1200px");
+        document.getElementById("viewport").setAttribute("content", "width=1200");
     }
     html2canvas(document.querySelector("#timetable"), {
         windowWidth: "1200px"
