@@ -12,18 +12,18 @@ function generateTable()
 {
     const timeList = ["y", "z", "1", "2", "3", "4", "n", "5", "6", "7", "8", "9", "a", "b", "c", "d"] ;
     const dayList = ["M", "T", "W", "R", "F", "S", "U"] ;
-    const timePeriod = ["6:00 ~ 6:50", "7:00 ~ 7:50", "8:00 ~ 8:50", "9:00 ~ 9:50", "10:10 ~ 11:00", "11:10 ~ 12:00",
-        "12:20 ~ 13:10", "13:20 ~ 14:10", "14:20 ~ 15:10", "15:30 ~ 16:20", "16:30 ~ 17:20", "17:30 ~ 18:20",
-        "18:30 ~ 19:20", "19:30 ~ 20:20", "20:30 ~ 21:20", "21:30 ~ 22:20"] ;
+    const timePeriod = ["6:00~6:50", "7:00~7:50", "8:00~8:50", "9:00~9:50", "10:10~11:00", "11:10~12:00",
+        "12:20~13:10", "13:20~14:10", "14:20~15:10", "15:30~16:20", "16:30~17:20", "17:30~18:20",
+        "18:30~19:20", "19:30~20:20", "20:30~21:20", "21:30~22:20"] ;
     for(let i=0; i<timeList.length; i++)
     {
         var time = timeList[i] ;
         var period = timePeriod[i] ;
-        var row = `<tr id="${time}"><td scope="row">${time}<br>(${period})</td>` ;
+        var row = `<tr id="${time}"><td scope="row" style="vertical-align: middle; padding: .75rem 0;">${time}<br>(${period})</td>` ;
         for(let j=0; j<dayList.length; j++)
         {
             var day = dayList[j]
-            row += `<td id="${day}${time}" style="vertical-align: middle;"></td>`
+            row += `<td id="${day}${time}" style="vertical-align: middle; padding: 0;"></td>`
         }
         row += `</tr>`
         $("#timetable tbody").append(row) ;
@@ -44,7 +44,7 @@ function filter_course(input) {
 }
 
 function getcourseID(element) {
-    return element.closest('.course').id;
+    return element.closest('.course, .btn').id;
 }
 
 function updateCreditHour(courseID, add) {
@@ -86,20 +86,16 @@ function toggleCourse(courseID) {
         var container = document.getElementById("selected_course");
         selected_course[courseID] = true;
         appendCourseElement(courseID, container, false);
-        // renderPeriodBlock(courseData[courseID]);
         button?.classList.add('selected');
     }
     updateCreditHour(courseID, add);
     updateTable(courseID, add);
-    console.log(selected_course);
-    /*document.querySelector(".credits").textContent = `${totalCredits()} 學分`;*/
 }
 
 function updateTable(courseID, add) {
     const data_set = filter_course(courseID);
     const timeList = data_set[0]["time"];
     const name = data_set[0]["name"];
-    // const classroom = data_set[0]["classroom"];
     const time_classroom = data_set[0]["time-classroom"];
     const tc_list = time_classroom.split(',');
     var tc_pair = {};
@@ -122,14 +118,17 @@ function updateTable(courseID, add) {
             }
         }
     }
-    console.log(tc_pair);
     for(let i=0; i<timeList.length; i++)
     {
         var time = timeList[i];
         var classroom = tc_pair[time];
         var tableElement = document.getElementById(time);
         var btn = document.createElement("button");
-        btn.classList.add("btn", "btn-outline-light");
+        btn.classList.add("btn", "btn-outline-dark");
+        btn.setAttribute("style", "font-size: 0.5rem; padding: 0.375rem;");
+        btn.setAttribute("id", courseID);
+        btn.setAttribute("data-toggle", "modal");
+        btn.setAttribute("data-target", "#courseModal");
         btn.innerHTML = name + '<br>' + classroom;
         if(!add)  // Remove from table
         {
@@ -138,7 +137,8 @@ function updateTable(courseID, add) {
         }
         else  // Add to table
         {
-            if(!($(`#${time}`).hasClass("bg-success"))){tableElement.classList.add("bg-success");}
+            const table_element = document.getElementById(time);
+            tableElement.classList.remove("bg-success");
             tableElement.appendChild(btn);
             total_period[time] = true;
         }
@@ -157,9 +157,29 @@ function isConflict(timeList) {
     return false;
 }
 
+function download() {
+    if(screen.width < 1024) {
+        document.getElementById("viewport").setAttribute("content", "width=1200px");
+    }
+    html2canvas(document.querySelector("#timetable")).then(canvas => {
+        var dataURL = canvas.toDataURL("image/png");
+        var link = document.createElement('a');
+        link.href = dataURL;
+        link.download = year + '-' + semester + '_timetable.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    });
+    if(screen.width < 1024) {
+        document.getElementById("viewport").setAttribute("content", "width=device-width, initial-scale=1, shrink-to-fit=no");
+    }
+}
+
 document.addEventListener("click", function ({ target }) {
-    if (target.classList.contains('toggle-course'))
+    if(target.classList.contains('toggle-course'))
         toggleCourse(getcourseID(target));
+    if(target.id == 'download')
+        download();
 })
 
 document.addEventListener("mouseover", function (event) {
@@ -177,7 +197,6 @@ document.addEventListener("mouseover", function (event) {
                 btn.classList.remove("btn-outline-dark");
                 btn.classList.add("btn-outline-light");
             }
-            // table_element.classList.add('text-white');
         });
     }
 })
@@ -213,9 +232,7 @@ function appendCourseElement(val, container, is_search) {
     search_result.sort(function(x, y){
         return x.id - y.id ;
     }) ;
-    /*for each item in the array...*/
     for (let i = 0; i < search_result.length; i++) {
-        /*check if the item starts with the same letters as the text field value:*/
         var id = search_result[i]['id'] ;
         var num_limit = search_result[i]['num_limit'] ;
         var reg_num = search_result[i]['reg_num'] ;
@@ -237,8 +254,6 @@ function appendCourseElement(val, container, is_search) {
             if(brief[j] == ''){break ;}
             badge += '&nbsp;<span class="badge badge-secondary">' + brief[j] + '</span>' ;
         }
-        // var start_pos = name.toUpperCase().search(val.toUpperCase()) ;
-        /*create a DIV element for each matching element:*/
         var list_group_item = document.createElement("div");
         list_group_item.setAttribute("id", `${id}`);
         list_group_item.setAttribute("class", "course list-group-item");
@@ -258,9 +273,18 @@ function appendCourseElement(val, container, is_search) {
             text-decoration: none;");
         icon.setAttribute("aria-hidden", "true");
         col_2.appendChild(icon);
-        col_1.innerHTML = name + '<br>';
-        col_1.innerHTML += badge + '<br>';
-        col_1.innerHTML += id + '・' + teacher + '・' + parseInt(credit) + '學分';
+        var nameTag = document.createElement("div");
+        var badgeTag = document.createElement("div");
+        var infoTag = document.createElement("div");
+        nameTag.setAttribute("style", "cursor: pointer;");
+        nameTag.setAttribute("data-toggle", "modal");
+        nameTag.setAttribute("data-target", "#courseModal");
+        nameTag.innerHTML = name;
+        badgeTag.innerHTML = badge;
+        infoTag.innerHTML = id + '・' + teacher + '・' + parseInt(credit) + '學分';
+        col_1.appendChild(nameTag);
+        col_1.appendChild(badgeTag);
+        col_1.appendChild(infoTag);
         list_group_item.appendChild(col_1);
         list_group_item.appendChild(col_2);
         container.appendChild(list_group_item);
@@ -305,8 +329,42 @@ function loadJSON()
     jQuery.ajaxSetup({async: true});
 }
 
+
+
+function showModal() {
+    $('#courseModal').on('show.bs.modal', function (event) {
+        var launcher = event.relatedTarget // Button that triggered the modal
+        var courseID = launcher.closest(".course, .btn").id;
+        var data = filter_course(courseID)[0];
+        var name = data["name"];
+        var id = data["id"];
+        var credit = parseInt(data["credit"]);
+        if(isNaN(credit)){credit = 0;}
+        var teacher = data["teacher"];
+        var tc = data["time-classroom"];
+        var num_limit = data["num_limit"];
+        if(num_limit == 9999){num_limit = "不限";}
+        var reg_num = data["reg_num"]
+        if(reg_num == -999){reg_num = "-";}
+        var modal = $(this)
+        modal.find('.modal-title').text(name)
+        var dl = '<dl class="row mb-0">';
+        var id_row = '<dt class="col-6 text-right">當期課號</dt><dd class="col-6">' + id + '</dd>';
+        var teacher_row = '<dt class="col-6 text-right">授課教師</dt><dd class="col-6">' + teacher + '</dd>';
+        var credit_row = '<dt class="col-6 text-right">學分數</dt><dd class="col-6">' + credit + '</dd>';
+        var num_row = '<dt class="col-6 text-right">人數上限 / 修課人數</dt><dd class="col-6">' + num_limit + ' / ' + reg_num + '</dd>';
+        var tc_row = '<dt class="col-6 text-right">上課時間及教室</dt><dd class="col-6">' + tc + '</dd>';
+        dl += id_row + teacher_row + credit_row + tc_row + num_row;
+        dl += '</dl>';
+        modal.find('.modal-body')[0].innerHTML = dl;
+        var outline = document.getElementById("outline");
+        outline.href = "https://timetable.nctu.edu.tw/?r=main/crsoutline&Acy=" + year + "&Sem=" + semester + "&CrsNo=" + id + "&lang=zh-tw"
+        })
+}
+
 $(document).ready(function(){
-    generateTable() ;
-    loadJSON() ;
-    searchCourse(document.getElementById("search")) ;
+    generateTable();
+    loadJSON();
+    searchCourse(document.getElementById("search"));
+    showModal();
 }) ;
