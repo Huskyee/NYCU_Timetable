@@ -1,12 +1,15 @@
-## Welcome to GitHub Pages
+## NCTU Timetable
 
-You can use the [editor on GitHub](https://github.com/Huskyee/NCTU_Timetable/edit/main/README.md) to maintain and preview the content for your website in Markdown files.
+交大選課預排系統
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### 功能
 
-### Markdown
-
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+1. 搜尋課名 / 課號 / 老師
+2. 點選「搜尋結果」或「已選課程」或「時間表」中的課程名字可以查看詳細資訊
+3. 將滑鼠移動至「搜尋結果」的課程上會顯示是否衝堂
+4. 點選「+」或「-」將課程加入課表或從課表移除。
+5. 將課表存成圖片
+6. 關閉瀏覽器後下次再打開課表不會消失
 
 ```markdown
 Syntax highlighted code block
