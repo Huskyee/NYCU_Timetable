@@ -3,12 +3,11 @@
   <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" id="viewport">
     <meta name="author" content="Chao-Kuo Chiu">
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
-    <script src="https://kit.fontawesome.com/40a5a3e39a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="style.css">
 
     <!-- Optional JavaScript -->
@@ -16,6 +15,8 @@
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js" crossorigin="anonymous"></script>
+    <script src="https://kit.fontawesome.com/40a5a3e39a.js" crossorigin="anonymous"></script>
 
     <!--  Custom JS  -->
     <script src="final.js"></script>
@@ -23,7 +24,7 @@
     <title>NCTU Timetable</title>
   </head>
   <body>
-    <header class="navbar navbar-dark bg-primary" style="padding: 8px 5%">
+    <header class="navbar navbar-dark bg-dark" style="padding: 8px 5%">
       <span class="navbar-brand mb-0 h1">NCTU Timetable</span>
     </header>
     <div class="container-fluid">
@@ -53,18 +54,25 @@
           </div>
         </div>
         <div class="col-lg-8 mt-3">
-          <div class="overflow-auto" style="height: 830px;">
-            <table class="table table-bordered text-center" id="timetable" style="table-layout: fixed; line-height: 20px; min-width: 800px; width: 100%;">
+          <div class="row">
+            <div class="col-6">
+            </div>
+            <div class="col-6 text-right mb-3">
+              <button id="download" class="btn btn-outline-dark column mr-3">下載圖片</button>
+            </div>
+          </div>
+          <div class="overflow-auto" style="height: 780px;">
+            <table class="table table-bordered text-center" id="timetable" style="table-layout: fixed; line-height: 20px; min-width: 900px; width: 100%;">
               <thead>
                 <tr>
                   <th scope="col">時間</th>
-                  <th scope="col">Mon</th>
-                  <th scope="col">Tue</th>
-                  <th scope="col">Wed</th>
-                  <th scope="col">Thu</th>
-                  <th scope="col">Fri</th>
-                  <th scope="col">Sat</th>
-                  <th scope="col">Sun</th>
+                  <th scope="col">MON</th>
+                  <th scope="col">TUE</th>
+                  <th scope="col">WED</th>
+                  <th scope="col">THU</th>
+                  <th scope="col">FRI</th>
+                  <th scope="col">SAT</th>
+                  <th scope="col">SUN</th>
                 </tr>
               </thead>
               <tbody>
@@ -75,5 +83,24 @@
         </div>
       </div>
       </div>
+      <!-- Modal -->
+    <div class="modal fade" id="courseModal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Modal title</h5>
+            <div type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </div>
+          </div>
+          <div class="modal-body">
+
+          </div>
+          <div class="modal-footer" style="justify-content: center;">
+            <a id="outline" type="button" class="btn btn-info" target="_blank">課程綱要</a>
+          </div>
+        </div>
+      </div>
+    </div>
    </body>
 </html>
