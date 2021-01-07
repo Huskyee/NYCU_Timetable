@@ -16,7 +16,7 @@ def parse_time(tc):
     # print(time_list)
     return time_list
 
-# 擷取「上課時間及教室」之「時間」部分
+# 擷取「上課時間及教室」之「教室」部分
 def parse_classroom(tc):
     tc_list = tc.split(',')
     classroom_list = []
