@@ -1,6 +1,6 @@
-# NCTU Timetable
+# NYCU Timetable
 
-交大選課預排系統
+國立陽明交通大學選課預排系統
 
 ## 功能
 
