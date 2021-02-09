@@ -33,7 +33,7 @@ def parse_classroom(tc):
 year = 109
 semester = 2
 
-url = "https://timetable.nctu.edu.tw/?r=main/get_cos_list"
+url = "https://timetable.nycu.edu.tw/?r=main/get_cos_list"
 # User-Agent 請求標頭（request header）含有能令網路協議同級層（peer）識別發出該用戶代理請求的軟體類型或版本號、該軟體使用的作業系統、還有軟體開發者的字詞串。
 headers = {"user-agent": "Mozilla/5.0"}
 data = {"m_acy": year,          # 學年度(開始)
