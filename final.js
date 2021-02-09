@@ -51,8 +51,8 @@ function getcourseID(element) {
 // Update the total credits and hours of the selected lists.
 function updateCreditHour(courseID, add) {
     var search_result = filter_course(courseID) ;
-    var credit = parseInt(search_result[0]['credit']) ;
-    var hour = parseInt(search_result[0]['hours']) ;
+    var credit = parseFloat(search_result[0]['credit']) ;
+    var hour = parseFloat(search_result[0]['hours']);
     if(isNaN(credit)){credit = 0;}
     if(isNaN(hour)){hour = 0;}
     var credit_element = document.getElementById('total_credits');
@@ -205,7 +205,7 @@ function appendCourseElement(val, container) {
         var num_limit = search_result[i]['num_limit'] ;
         var reg_num = search_result[i]['reg_num'] ;
         var name = search_result[i]['name'] ;
-        var credit = parseInt(search_result[i]['credit']) ;
+        var credit = parseFloat(search_result[i]['credit']) ;
         var hours = search_result[i]['hours'] ;
         var teacher = search_result[i]['teacher'] ;
         var time = search_result[i]['time'] ;
@@ -249,7 +249,7 @@ function appendCourseElement(val, container) {
         nameTag.setAttribute("data-target", "#courseModal");
         nameTag.innerHTML = name;
         badgeTag.innerHTML = badge;
-        infoTag.innerHTML = id + '・' + teacher + '・' + parseInt(credit) + '學分';
+        infoTag.innerHTML = id + '・' + teacher + '・' + parseFloat(credit) + ' 學分';
         col_1.appendChild(nameTag);
         col_1.appendChild(badgeTag);
         col_1.appendChild(infoTag);
@@ -307,8 +307,10 @@ function showModal() {
         var data = filter_course(courseID)[0];
         var name = data["name"];
         var id = data["id"];
-        var credit = parseInt(data["credit"]);
+        var credit = parseFloat(data["credit"]);
+        var hour = parseFloat(data["hours"]);
         if(isNaN(credit)){credit = 0;}
+        if(isNaN(hour)){hour = 0;}
         var teacher = data["teacher"];
         var tc = data["time-classroom"];
         var num_limit = data["num_limit"];
@@ -320,14 +322,14 @@ function showModal() {
         var dl = '<dl class="row mb-0">';
         var id_row = '<dt class="col-6 text-right">當期課號</dt><dd class="col-6">' + id + '</dd>';
         var teacher_row = '<dt class="col-6 text-right">授課教師</dt><dd class="col-6">' + teacher + '</dd>';
-        var credit_row = '<dt class="col-6 text-right">學分數</dt><dd class="col-6">' + credit + '</dd>';
+        var credit_hour_row = '<dt class="col-6 text-right">學分 / 時數</dt><dd class="col-6">' + credit + ' / ' + hour + '</dd>';
         var num_row = '<dt class="col-6 text-right">人數上限 / 修課人數</dt><dd class="col-6">' + num_limit + ' / ' + reg_num + '</dd>';
         var tc_row = '<dt class="col-6 text-right">上課時間及教室</dt><dd class="col-6">' + tc + '</dd>';
-        dl += id_row + teacher_row + credit_row + tc_row + num_row;
+        dl += id_row + teacher_row + credit_hour_row + tc_row + num_row;
         dl += '</dl>';
         modal.find('.modal-body')[0].innerHTML = dl;
         var outline = document.getElementById("outline");
-        outline.href = "https://timetable.nctu.edu.tw/?r=main/crsoutline&Acy=" + year + "&Sem=" + semester + "&CrsNo=" + id + "&lang=zh-tw"
+        outline.href = "https://timetable.nycu.edu.tw/?r=main/crsoutline&Acy=" + year + "&Sem=" + semester + "&CrsNo=" + id + "&lang=zh-tw"
         })
 }
 
