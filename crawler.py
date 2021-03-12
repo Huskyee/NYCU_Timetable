@@ -76,47 +76,8 @@ def get_dep(fcollege, fcategory, ftype, flang, acysem):
     return res.json()
 
 
-types = get_type()
-for i in range(len(types)):
-    ftype = types[i]["uid"]
-    # print("type: " + types[i]["cname"])
-    categories = get_category(ftype, flang, acysem)
-    for j in categories.keys():
-        if j is not "":
-            fcategory = j
-            # print("category: " + categories[fcategory])
-        else:
-            fcategory = ""
-        colleges = get_college(fcategory, ftype, flang, acysem)
-        if len(colleges):
-            for k in colleges.keys():
-                if k is not "":
-                    fcollege = k
-                    # print("college: " + colleges[fcollege])
-                else:
-                    fcollege = ""
-                deps = get_dep(fcollege, fcategory, ftype, flang, acysem)
-                if len(deps):
-                    for l in deps.keys():
-                        fdep = l
-                        # print("dep: " + deps[fdep])
-                        if fdep not in dep_list:
-                            dep_list.append(fdep)
-        else:
-            fcollege = ""
-            # print("college: None")
-            deps = get_dep(fcollege, fcategory, ftype, flang, acysem)
-            if len(deps):
-                for l in deps.keys():
-                    fdep = l
-                    # print("dep: " + deps[fdep])
-                    if fdep not in dep_list:
-                        dep_list.append(fdep)
-
-for dep in dep_list:
-    # print(dep)
+def get_cos(dep):
     url = "https://timetable.nycu.edu.tw/?r=main/get_cos_list"
-    # User-Agent 請求標頭（request header）含有能令網路協議同級層（peer）識別發出該用戶代理請求的軟體類型或版本號、該軟體使用的作業系統、還有軟體開發者的字詞串。
     data = {"m_acy": year,          # 學年度(開始)
             "m_sem": semester,      # 學期別(開始)
             "m_acyend": year,       # 學年度(結束)
@@ -180,6 +141,53 @@ for dep in dep_list:
                     # "memo": raw_cos_data["memo"],                           # 說明
                     "type": raw_cos_data["cos_type"],                       # 選別
                 }
+
+
+types = get_type()
+for i in range(len(types)):
+    ftype = types[i]["uid"]
+    print("type: " + types[i]["cname"])
+    categories = get_category(ftype, flang, acysem)
+    if types[i]["cname"] == "其他課程":
+        print("    category: ")
+        print("        college: ")
+        for fcategory in categories.keys():
+            print("            dep: " + categories[fcategory])
+            if fcategory not in dep_list:
+                dep_list.append(fcategory)
+                get_cos(fcategory)
+    else:
+        for fcategory in categories.keys():
+            try:
+                print("    category: " + categories[fcategory])
+            except:
+                print("    category: ")
+            colleges = get_college(fcategory, ftype, flang, acysem)
+            if len(colleges):
+                for fcollege in colleges.keys():
+                    try:
+                        print("        college: " + colleges[fcollege])
+                    except:
+                        print("        college: ")
+                    deps = get_dep(fcollege, fcategory, ftype, flang, acysem)
+                    if len(deps):
+                        for fdep in deps.keys():
+                            print("            dep: " + deps[fdep])
+                            if fdep not in dep_list:
+                                dep_list.append(fdep)
+                                get_cos(fdep)
+            else:
+                fcollege = ""
+                print("        college: ")
+                deps = get_dep(fcollege, fcategory, ftype, flang, acysem)
+                if len(deps):
+                    for fdep in deps.keys():
+                        print("            dep: " + deps[fdep])
+                        if fdep not in dep_list:
+                            dep_list.append(fdep)
+                            get_cos(fdep)
+    print("\n")
+
 
 with open(str(year) + '-' + str(semester) + "_data.json", "w") as f:
     f.write(json.dumps(course_data))
