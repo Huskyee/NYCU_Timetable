@@ -247,6 +247,12 @@ function appendCourseElement(val, container) {
         nameTag.setAttribute("style", "cursor: pointer;");
         nameTag.setAttribute("data-toggle", "modal");
         nameTag.setAttribute("data-target", "#courseModal");
+        badgeTag.setAttribute("style", "cursor: pointer;");
+        badgeTag.setAttribute("data-toggle", "modal");
+        badgeTag.setAttribute("data-target", "#courseModal");
+        infoTag.setAttribute("style", "cursor: pointer;");
+        infoTag.setAttribute("data-toggle", "modal");
+        infoTag.setAttribute("data-target", "#courseModal");
         nameTag.innerHTML = name;
         badgeTag.innerHTML = badge;
         infoTag.innerHTML = id + '・' + teacher + '・' + parseFloat(credit) + ' 學分';
