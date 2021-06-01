@@ -294,7 +294,7 @@ function searchCourse(inp) {
 function loadJSON()
 {
     jQuery.ajaxSetup({async: false});
-    $.get(`${year}-${semester}_data.json`,function(data,status){
+    $.get(`course_data\\${year}-${semester}_data.json`,function(data,status){
         if(status != "success"){
             alert("Couldn't get course data!!");
         }
@@ -342,13 +342,22 @@ function showModal() {
 // Save the selected course data to local storage.
 function save() {
     localStorage.setItem("selected_course",JSON.stringify(selected_course));
+    localStorage.setItem("year", year);
+    localStorage.setItem("semester", semester);
 }
 
 // Load the selected course data from local storage.
 function load() {
-    selected_course = localStorage.getItem("selected_course");
-    selected_course = JSON.parse(selected_course);
-    if(selected_course==null){
+    var old_year = localStorage.getItem("year");
+    var old_semester = localStorage.getItem("semester");
+    if (year == old_year && semester == old_semester){
+        selected_course = localStorage.getItem("selected_course");
+        selected_course = JSON.parse(selected_course);
+        if(selected_course==null){
+            selected_course = {};
+        }
+    }
+    else{
         selected_course = {};
     }
 }

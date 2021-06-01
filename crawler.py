@@ -189,5 +189,5 @@ for i in range(len(types)):
     print("\n")
 
 
-with open(str(year) + '-' + str(semester) + "_data.json", "w") as f:
+with open("course_data\\" + str(year) + '-' + str(semester) + "_data.json", "w") as f:
     f.write(json.dumps(course_data))
