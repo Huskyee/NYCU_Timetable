@@ -1,6 +1,6 @@
 # NYCU Timetable
 
-國立陽明交通大學選課模擬系統
+[國立陽明交通大學選課模擬系統](https://huskyee.github.io/NYCU_Timetable/)
 
 ## 功能
 
