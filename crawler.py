@@ -3,7 +3,7 @@ import re
 import requests
 
 year = 110
-semester = 1
+semester = 2
 acysem = str(year) + str(semester)
 flang = "zh-tw"
 headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"}
@@ -93,7 +93,8 @@ def get_cos(dep):
             "m_cos_code": "**",
             "m_crstime": "**",
             "m_crsoutline": "**",
-            "m_costype": "**"}
+            "m_costype": "**",
+            "m_selcampus": "**"}
 
     # 資料型態為 json
     r = requests.post(url, headers=headers, data=data)
