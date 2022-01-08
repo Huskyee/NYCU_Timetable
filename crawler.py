@@ -2,7 +2,7 @@ import json
 import re
 import requests
 
-year = 110
+year = 109
 semester = 2
 acysem = str(year) + str(semester)
 flang = "zh-tw"
