@@ -1,7 +1,7 @@
 "use strict";
 
-const year = 110;
-const semester = 2;
+const year = 111;
+const semester = 1;
 var course_data = {};
 var selected_course = {};
 var total_credits = 0;
