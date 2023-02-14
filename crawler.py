@@ -3,7 +3,7 @@ import re
 import requests
 
 year = 111
-semester = 1
+semester = 2
 acysem = str(year) + str(semester)
 flang = "zh-tw"
 headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36"}
@@ -39,7 +39,7 @@ def parse_classroom(tc):
 
 
 def get_type():
-    res = requests.get('https://timetable.nycu.edu.tw/?r=main/get_type', headers=headers)
+    res = requests.get('https://timetable.nycu.edu.tw/?r=main/get_type', headers=headers, verify=False)
     return res.json()
 
 
@@ -49,7 +49,7 @@ def get_category(ftype, flang, acysem):
         'flang': flang,
         'acysem': acysem,
         'acysemend': acysem
-    }, headers=headers)
+    }, headers=headers, verify=False)
     return res.json()
 
 
@@ -60,7 +60,7 @@ def get_college(fcategory, ftype, flang, acysem):
         'flang': flang,
         'acysem': acysem,
         'acysemend': acysem
-    }, headers=headers)
+    }, headers=headers, verify=False)
     return res.json()
 
 
@@ -72,7 +72,7 @@ def get_dep(fcollege, fcategory, ftype, flang, acysem):
         'flang': flang,
         'acysem': acysem,
         'acysemend': acysem
-    }, headers=headers)
+    }, headers=headers, verify=False)
     return res.json()
 
 
@@ -97,7 +97,7 @@ def get_cos(dep):
             "m_selcampus": "**"}
 
     # 資料型態為 json
-    r = requests.post(url, headers=headers, data=data)
+    r = requests.post(url, headers=headers, verify=False, data=data)
 
     # requests.codes.ok = 200
     if r.status_code != requests.codes.ok:
